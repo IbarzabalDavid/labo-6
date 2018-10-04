@@ -1,8 +1,10 @@
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -37,18 +39,9 @@ public class Main extends Application {
         Image image1 = new Image("image1.jpg");
         Image image2 = new Image("image2.jpg");
         Image image3 = new Image("image3.jpg");
-        ImageView imageViewdef = new ImageView(image);
-        imageViewdef.setFitHeight(500);
-        imageViewdef.setFitWidth(500);
-        ImageView imageView1 = new ImageView(image1);
-        imageView1.setFitHeight(500);
-        imageView1.setFitWidth(500);
-        ImageView imageView2 = new ImageView(image2);
-        imageView2.setFitHeight(500);
-        imageView2.setFitWidth(500);
-        ImageView imageView3 = new ImageView(image3);
-        imageView3.setFitHeight(500);
-        imageView3.setFitWidth(500);
+        ImageView imageView = new ImageView(image);
+        imageView.setPreserveRatio(true);
+        imageView.setFitWidth(500);
         Slider lum=new Slider(-1,1,0);
         lum.setMaxWidth(140);
         Slider con=new Slider(-1,1,0);
@@ -62,37 +55,81 @@ public class Main extends Application {
         Label teiT=new Label("Teinte");
         Label satT=new Label("Saturation");
      //Bottom
-        Label welcome=new Label("  Bienvenue dans le modificateur d'images!");
-        Label resetT=new Label("  Réinitialisation des ajustement de couleurs");
-        Label pic1T=new Label("  Image 1 chargée");
-        Label pic2T=new Label("  Image 2 chargée");
-        Label pic3T=new Label("  Image 3 chargée");
+        Label label=new Label("Bienvenue dans le modificateur d'images!");
+        label.setPadding(new Insets(5));
+
 
 //PLACEMENTS & NAMES
         file.getItems().addAll(load);
         load.getItems().addAll(pic1, pic2, pic3);
         action.getItems().addAll(reset);
         MenuBar menuBar = new MenuBar(file, action);
+        ContextMenu contextMenu=new ContextMenu(file,action);
+
 
         VBox vb=new VBox(lumT,lum,conT,con,teiT,tei,satT,sat);
         vb.setAlignment(Pos.CENTER);
         vb.setSpacing(10);
 
-        HBox hb=new HBox(imageViewdef,vb);
+        HBox hb=new HBox(imageView,vb);
         hb.setAlignment(Pos.CENTER);
         hb.setSpacing(10);
 
         BorderPane section = new BorderPane();
         section.setTop(menuBar);
-        section.setBottom(welcome);
+        section.setBottom(label);
         section.setCenter(hb);
-
+        section.setOnContextMenuRequested(event -> {
+            contextMenu.show(section, event.getScreenX(), event.getScreenY());
+        });
 
 
 //SetScene
         primaryStage.setScene(new Scene(section));
 
 //ACTIONS
+     // menu
+        pic1.setOnAction((event) ->{
+            imageView.setImage(image1);
+            reset.fire();
+            label.setText("Image 1 chargée");
+        });
+        pic2.setOnAction((event) ->{
+            imageView.setImage(image2);
+            reset.fire();
+            label.setText("Image 2 chargée");
+        });
+        pic3.setOnAction((event) ->{
+            imageView.setImage(image3);
+            reset.fire();
+            label.setText("Image 3 chargée");
+        });
+        reset.setOnAction((event) ->{
+            lum.setValue(0);
+            con.setValue(0);
+            tei.setValue(0);
+            sat.setValue(0);
+            label.setText("Réinitialisation des ajustement de couleurs");
+        });
+     //Setting imageView
+        ColorAdjust imageColors = new ColorAdjust();
+        imageView.setEffect(imageColors);
+        lum.valueProperty().addListener((that, oldValue, newValue)->{
+            imageColors.setBrightness((double)newValue);
+        });
+        con.valueProperty().addListener((that, oldValue, newValue)->{
+            imageColors.setContrast((double)newValue);
+        });
+        tei.valueProperty().addListener((that, oldValue, newValue)->{
+            imageColors.setHue((double)newValue);
+        });
+        sat.valueProperty().addListener((that, oldValue, newValue)->{
+            imageColors.setSaturation((double)newValue);
+        });
+
+
+
+
 
 //SHOW
         primaryStage.show();
