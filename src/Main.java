@@ -54,6 +54,14 @@ public class Main extends Application {
         Label conT=new Label("Contraste");
         Label teiT=new Label("Teinte");
         Label satT=new Label("Saturation");
+        Tooltip tt1=new Tooltip("Rend l'image plus claire ou plus sombre");
+        Tooltip tt2=new Tooltip("Diminue ou augmente la différence entre les couleurs");
+        Tooltip tt3=new Tooltip("Change la teinte (couleur) de l'image");
+        Tooltip tt4=new Tooltip("Diminue ou augmente l'intensité des couleurs");
+        lum.setTooltip(tt1);
+        con.setTooltip(tt2);
+        tei.setTooltip(tt3);
+        sat.setTooltip(tt4);
      //Bottom
         Label label=new Label("Bienvenue dans le modificateur d'images!");
         label.setPadding(new Insets(5));
